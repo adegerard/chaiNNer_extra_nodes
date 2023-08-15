@@ -1,6 +1,6 @@
 # Extra nodes for chaiNNer
 
-Here are some nodes I developped for chaiNNer: for PoC, for testing purpose, before creating a PR. The nodes can be added to Windows/Linux portable software only.
+Here are some nodes I developped for chaiNNer: for PoC, for testing purpose, before creating a PR, etc. The nodes can be added to Windows/Linux portable software only.
 
 **This is not a repository made/supported by chaiNNer organization.**
 
@@ -14,7 +14,7 @@ By using these nodes, you agree to:
 
 **Reasons**
 - These nodes may have side effects if not validated against your chaiNNer version
-- These nodes passed only some basic test and not a full validation
+- These nodes passed only some basic tests and not a full validation
 - Some nodes will be removed from this repository as soon as they are integrated in a chaiNNer release
 - Some nodes may not respect chaiNNer philosophy
 - I do not have time to do extra stuff for compatibility
@@ -27,7 +27,7 @@ By using these nodes, you agree to:
 
 For each node, files have to be copied to the specified directory.
 
-limitation: installation is done by hand, I plan to later create a script to do this or to provide a zip file.
+note: installation is done by hand, maybe I will create a script later to do this or provide a zip file.
 
 
 ## Nodes
