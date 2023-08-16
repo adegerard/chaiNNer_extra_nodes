@@ -19,6 +19,8 @@ By using these nodes, you agree to:
 - Some nodes may not respect chaiNNer philosophy
 - I do not have time to do extra stuff for compatibility
 
+**Use at your own risk!**
+
 ## Compatible chaiNNer version
 
 0.19.2

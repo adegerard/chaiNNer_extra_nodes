@@ -126,7 +126,15 @@ OVERLAY_X0_Y0_FACTORS = {
                     _ => true,
                 };
 
-                Input0 & Image { channels: max(Input0.channels, Input1.channels) }
+                if valid {
+                    Image {
+                        width: Input0.width,
+                        height: Input0.height,
+                        channels: max(Input0.channels, Input1.channels)
+                    }
+                } else {
+                    never
+                }
 
             """,
             assume_normalized=True,

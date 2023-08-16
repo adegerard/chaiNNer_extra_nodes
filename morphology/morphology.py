@@ -48,16 +48,14 @@ class MorphShape(Enum):
             default=MorphOperation.EROSION,
             option_labels=MORPH_OPERATION_LABELS,
         ),
-        if_enum_group(1, (MorphOperation.EROSION, MorphOperation.DILATION))(
-            EnumInput(
-                MorphShape,
-                label="Shape",
-                option_labels={
-                    MorphShape.RECTANGLE: "Square",
-                    MorphShape.ELLIPSE: "Circle",
-                    MorphShape.CROSS: "Cross",
-                },
-            )
+        EnumInput(
+            MorphShape,
+            label="Shape",
+            option_labels={
+                MorphShape.RECTANGLE: "Square",
+                MorphShape.ELLIPSE: "Circle",
+                MorphShape.CROSS: "Cross",
+            },
         ),
         SliderInput(
             "Radius",
