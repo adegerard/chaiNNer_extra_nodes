@@ -34,10 +34,10 @@ note: installation is done by hand, maybe I will create a script later to do thi
 
 ## Nodes
 
-- [Overlay images](###Overlay-images)
-- [Morphology](###Morphology)
-- [Text as image](###Text-as-image)
-- [Images to video](###Images-to-video)
+- [Overlay images](#overlay-images)
+- [Morphology](#morphology)
+- [Text as image](#text-as-image)
+- [Images to video](#images-to-video)
 
 
 ### Overlay images
@@ -116,6 +116,8 @@ Copy [morphology.py](morphology/morphology.py) to
 ### Text as image
 _________________________________________
 
+<span style="color:red">For evaluation purpose, still in progress</span>
+
 #### Motivation
 This node transforms a text into any image.
 It creates an image and add the text to the position specified
@@ -149,7 +151,6 @@ _________________________________________
 - The input folder must already contains images
 - There is neither "progress bar" nor estimated time (ETA). _The only way to see if it works is to look at the size of the output video file which is refreshed every minute_
 - If something wrong happens, it stops and displays an error message
-- Some options will be hidden for codecs other than x264/x265 because they are useless. _not tested_
 
 #### Motivation
 Create a video from images stored in a directory.
