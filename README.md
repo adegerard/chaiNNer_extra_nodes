@@ -23,7 +23,7 @@ By using these nodes, you agree to:
 - Some nodes may not respect chaiNNer philosophy
 - I do not have time to do extra stuff for compatibility
 
-<span style="color:red">**Use at your own risk!**<span style="color:red">
+**Use at your own risk!**
 
 ## Installation
 
@@ -32,7 +32,7 @@ For each node, files have to be copied to the specified directory.
 note: installation is done by hand, maybe I will create a script later to do this or provide a zip file.
 
 
-## Nodes
+## <span style="color:red">Nodes</span>
 
 - [Overlay images](#overlay-images)
 - [Morphology](#morphology)
