@@ -4,6 +4,10 @@ Here are some nodes I developped for chaiNNer: for PoC, for testing purpose, bef
 
 **This is not a repository made/supported by chaiNNer organization.**
 
+## Compatible chaiNNer version
+
+0.19.3
+
 ## Agreements
 
 By using these nodes, you agree to:
@@ -19,11 +23,7 @@ By using these nodes, you agree to:
 - Some nodes may not respect chaiNNer philosophy
 - I do not have time to do extra stuff for compatibility
 
-**Use at your own risk!**
-
-## Compatible chaiNNer version
-
-0.19.2
+<span style="color:red">**Use at your own risk!**<span style="color:red">
 
 ## Installation
 
@@ -34,9 +34,10 @@ note: installation is done by hand, maybe I will create a script later to do thi
 
 ## Nodes
 
-Utilities:
-- [Overlay images](#Overlay-images)
-- [Morphology](#Morphology)
+- [Overlay images](###Overlay-images)
+- [Morphology](###Morphology)
+- [Text as image](###Text-as-image)
+- [Images to video](###Images-to-video)
 
 
 ### Overlay images
@@ -70,7 +71,7 @@ The behavior of the following options differs from the options defined in the bl
 #### Installation
 
 Copy [overlay_images.py](overlay_images/overlay_images.py) to
-`chaiNNer-windows-x64-0.19.2-portable\resources\src\packages\chaiNNer_standard\image_utility\compositing`
+`chaiNNer-windows-x64-0.19.3-portable\resources\src\packages\chaiNNer_standard\image_utility\compositing`
 
 
 
@@ -108,4 +109,72 @@ The number of iterations is the number of times erosion or dilation operation wi
 #### Installation
 
 Copy [morphology.py](morphology/morphology.py) to
-`chaiNNer-windows-x64-0.19.2-portable\resources\src\packages\chaiNNer_standard\image_filter\miscellaneous`
+`chaiNNer-windows-x64-0.19.3-portable\resources\src\packages\chaiNNer_standard\image_filter\miscellaneous`
+
+
+
+### Text as image
+_________________________________________
+
+#### Motivation
+This node transforms a text into any image.
+It creates an image and add the text to the position specified
+It automatically chooses the font size to fit the canva specified by the `width` and `height` options.
+
+
+#### Description and usage
+<p align="center">
+    <img src="./text_as_image/text_as_image.png"  width="150"/>
+</p>
+
+Options
+<p align="center">
+    <img src="./text_as_image/text_as_image_options.png"  width="450"/>
+</p>
+
+
+#### Installation
+
+- Copy [text_as_image.py](text_as_image/text_as_image.py) to
+`chaiNNer-windows-x64-0.19.3-portable\resources\src\packages\chaiNNer_standard\image_utility\compositing`
+- Copy the [fonts](text_as_image/fonts) directory to `chaiNNer-windows-x64-0.19.3-portable\resources\src`
+
+
+
+### Images to video
+_________________________________________
+
+<span style="color:red">For evaluation purpose, limitations:</span>
+- This node has to be the only one in a project. _reason: not tested with other nodes_
+- The input folder must already contains images
+- There is neither "progress bar" nor estimated time (ETA). _The only way to see if it works is to look at the size of the output video file which is refreshed every minute_
+- If something wrong happens, it stops and displays an error message
+- Some options will be hidden for codecs other than x264/x265 because they are useless. _not tested_
+
+#### Motivation
+Create a video from images stored in a directory.
+
+#### Description and usage
+<p align="center">
+    <img src="./images_to_video/images_to_video.png"  width="150"/>
+</p>
+
+Options
+<p align="center">
+    <img src="./images_to_video/images_to_video_options.png"  width="450"/>
+</p>
+
+- Containers: mkv, mp4, avi. _only a subset of the one supported by FFmpeg, other can be supported, please ask_
+- Codec: x264, x265, HEVC, FFv1. _only a subset of the one supported by FFmpeg, other can be supported, please ask_
+- Other options: available only for x264, x265
+
+#### Installation
+
+- Copy [images_to_video.py](images_to_video/images_to_video.py) to `chaiNNer-windows-x64-0.19.3-portable\resources\src\packages\chaiNNer_standard\image\io`
+- Overwrite [generic_inputs.py](images_to_video/generic_inputs.py) to `chaiNNer-windows-x64-0.19.3-portable\resources\src\nodes\properties\inputs`
+- Overwrite [chainner-scope.ts](images_to_video/chainner-scope.ts) to `chaiNNer-windows-x64-0.19.3-portable\resources\src\common\types`
+
+
+
+
+
