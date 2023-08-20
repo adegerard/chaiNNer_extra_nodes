@@ -4,12 +4,9 @@ import os
 import sys
 from enum import Enum
 
-import cv2
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
-import navi
-from nodes.groups import if_enum_group
 from nodes.impl.color.color import Color
 from nodes.impl.image_utils import normalize
 from nodes.impl.pil_utils import convert_to_BGRA
@@ -69,7 +66,7 @@ TEXT_AS_IMAGE_FONTS = {
     },
     TextAsImageFont.OPEN_SANS_REGULAR: {
         "label": "Open Sans",
-        "path": "OpenSans/OpenSans-VariableFont_wdth,wght.ttf",
+        "path": "OpenSans/OpenSans-Regular.ttf",
     },
     TextAsImageFont.OPEN_SANS_BOLD: {
         "label": "Open Sans Bold",
@@ -128,16 +125,35 @@ TEXT_AS_IMAGE_POSITION_LABELS = {
 }
 
 TEXT_AS_IMAGE_X_Y_REF_FACTORS = {
-    TextAsImagePosition.TOP_LEFT:           {'x': np.array([0, 0.5]), 'y': np.array([0, 0.5])},
-    TextAsImagePosition.TOP_CENTERED:       {'x': np.array([0.5, 0]), 'y': np.array([0, 0.5])},
-    TextAsImagePosition.TOP_RIGHT:          {'x': np.array([1, -0.5]), 'y': np.array([0, 0.5])},
-    TextAsImagePosition.CENTERED_LEFT:      {'x': np.array([0, 0.5]), 'y': np.array([0.5, 0])},
-    TextAsImagePosition.CENTERED:           {'x': np.array([0.5, 0]), 'y': np.array([0.5, 0])},
-    TextAsImagePosition.CENTERED_RIGHT:     {'x': np.array([1, -0.5]), 'y': np.array([0.5, 0])},
-    TextAsImagePosition.BOTTOM_LEFT:        {'x': np.array([0, 0.5]), 'y': np.array([1, -0.5])},
-    TextAsImagePosition.BOTTOM_CENTERED:    {'x': np.array([0.5, 0]), 'y': np.array([1, -0.5])},
-    TextAsImagePosition.BOTTOM_RIGHT:       {'x': np.array([1, -0.5]), 'y': np.array([1, -0.5])},
+    TextAsImagePosition.TOP_LEFT: {"x": np.array([0, 0.5]), "y": np.array([0, 0.5])},
+    TextAsImagePosition.TOP_CENTERED: {
+        "x": np.array([0.5, 0]),
+        "y": np.array([0, 0.5]),
+    },
+    TextAsImagePosition.TOP_RIGHT: {"x": np.array([1, -0.5]), "y": np.array([0, 0.5])},
+    TextAsImagePosition.CENTERED_LEFT: {
+        "x": np.array([0, 0.5]),
+        "y": np.array([0.5, 0]),
+    },
+    TextAsImagePosition.CENTERED: {"x": np.array([0.5, 0]), "y": np.array([0.5, 0])},
+    TextAsImagePosition.CENTERED_RIGHT: {
+        "x": np.array([1, -0.5]),
+        "y": np.array([0.5, 0]),
+    },
+    TextAsImagePosition.BOTTOM_LEFT: {
+        "x": np.array([0, 0.5]),
+        "y": np.array([1, -0.5]),
+    },
+    TextAsImagePosition.BOTTOM_CENTERED: {
+        "x": np.array([0.5, 0]),
+        "y": np.array([1, -0.5]),
+    },
+    TextAsImagePosition.BOTTOM_RIGHT: {
+        "x": np.array([1, -0.5]),
+        "y": np.array([1, -0.5]),
+    },
 }
+
 
 @compositing_group.register(
     schema_id="chainner:image:text_as_image",
@@ -188,7 +204,7 @@ TEXT_AS_IMAGE_X_Y_REF_FACTORS = {
                 Image {
                     width: Input4 & uint,
                     height: Input5 & uint,
-                    channels: 4
+                    channels: Input2.channels
                 }
                 """,
             assume_normalized=True,
@@ -204,17 +220,13 @@ def text_as_image_node(
     height: int,
     position: TextAsImagePosition,
 ) -> np.ndarray:
-
     font_path = os.path.join(
-        os.path.dirname(sys.modules["__main__"].__file__),
-        f"fonts",
-        f"{TEXT_AS_IMAGE_FONTS[font_name]['path']}",
+        os.path.dirname(sys.modules["__main__"].__file__),  # type: ignore
+        f"fonts/{TEXT_AS_IMAGE_FONTS[font_name]['path']}",  # type: ignore
     )
-    # print("---------------------------------------------------------------")
 
     lines = text.split("\n")
     line_count, max_line = len(lines), max(lines, key=len)
-    # print(f"line_count: {line_count}")
 
     # Use a text as reference to get max size
     font = ImageFont.truetype(font_path, size=100)
@@ -224,32 +236,24 @@ def text_as_image_node(
     w = int(width * 100.0 / w_ref)
     h = int(height * 100.0 / (h_ref * line_count))
     font_size = min(w, h)
-    # print(f"max w, h: {w}x{h}")
-    # print(f"calculated font size: {font_size}")
-    # print(f"TextAsImageSizeConstraint.CONTAINER: {width}x{height}")
-
     font = ImageFont.truetype(font_path, size=font_size)
     w_text, h_text = font.getsize(max_line)
     h_text *= line_count
-    # print(f"(w_text, h_text): {w_text}x{h_text}")
 
+    # Text color
     color = 255 * np.array(font_color.value)
     color = tuple(color.astype("uint8"))
 
-    pil_image = Image.new("RGBA", (width, height), (255, 0, 0, 0))
+    # Create a PIL image to add text
+    if font_color.channels == 1:
+        color = color[0]
+        pil_image = Image.new("L", (width, height), 255)
+    else:
+        pil_image = Image.new("RGBA", (width, height), (255, 0, 0, 0))
     drawing = ImageDraw.Draw(pil_image)
 
-    # Use middle anchor to simplify
-    # https://pillow.readthedocs.io/en/stable/reference/ImageDraw.html#
-    # https://pillow.readthedocs.io/en/stable/handbook/text-anchors.html#text-anchors
-    x_ref = round(np.sum(np.array([width, w_text]) * TEXT_AS_IMAGE_X_Y_REF_FACTORS[position]['x'])) # type: ignore
-    y_ref = round(np.sum(np.array([height, h_text]) * TEXT_AS_IMAGE_X_Y_REF_FACTORS[position]['y'])) # type: ignore
-
-    # x0, y0 = x_ref - w_text/2, y_ref - h_text/2
-    # x1, y1 = x0 + w_text, y0 + h_text
-    # print(f"(x0,y0)(x1,y1): ({x0},{y0})({x1},{y1})")
-    # outline_width = 3
-    # drawing.rectangle(((x0, y0), (x1, y1)), outline ="black", width=outline_width)
+    x_ref = round(np.sum(np.array([width, w_text]) * TEXT_AS_IMAGE_X_Y_REF_FACTORS[position]["x"]))  # type: ignore
+    y_ref = round(np.sum(np.array([height, h_text]) * TEXT_AS_IMAGE_X_Y_REF_FACTORS[position]["y"]))  # type: ignore
 
     drawing.text(
         (x_ref, y_ref),
@@ -260,9 +264,8 @@ def text_as_image_node(
         fill=color,
     )
 
-    # cv2.rectangle(opencv_img, (x0, y0), (x1, y1), (128,128,128,128), 5)
-
     img = normalize(np.array(pil_image))
-    img = convert_to_BGRA(img, img.shape[2])
+    if font_color.channels != 1:
+        img = convert_to_BGRA(img, img.shape[2])
 
     return img
